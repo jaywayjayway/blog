@@ -1,8 +1,6 @@
 title: Cobbler的简单使用
 date: 2016-05-24 12:44:10
-tags:
-- cobbler
-
+tags:[cobbler]
 categories: devops
 ---
 ###  一、 cobbler介绍
@@ -79,16 +77,16 @@ Cobbler数据目录/var/lib/cobbler，此目录存储和Cobbler profiles、syste
 
 #### 2.3  cobbler安装
 
-1. 添加EPEL源
+1.添加EPEL源
 ``` python
 wget http://mirrors.sohu.com/fedora-epel/5/i386/epel-release-5-4.noarch.rpm
 rpm -ivh epel-release-5-4.noarch.rpm
 ```
-2. 安装依赖库
+2.安装依赖库
 ``` python
 yum -y install cobbler httpdxinetdtftp-server yum-util srsyn cdhcp cman PyYAML debmirror    cobbler-web(可选WEB_UI)  python-ctypes
 ``` 
-3. 关闭Selinux及iptables防火墙否则Pxe会停滞在引导界面
+3.关闭Selinux及iptables防火墙否则Pxe会停滞在引导界面
 ``` python
 #临时关闭
 selinux:Setenfoce 0
@@ -97,7 +95,7 @@ sed–i ‘/^SELINUX=/ s/=.*$/=disabled/g’ /etc/selinux/config
 #关闭iptalbes
 /etc/init.d/iptalbes stop   or   iptables –F
 ``` 
-4. 配置`dhcpd.conf `文件
+4.配置`dhcpd.conf `文件
 ``` python
 cat > /etc/dhcpd.conf<< EOF
 ddns-update-style interim;
@@ -118,7 +116,7 @@ subnet 192.168.2.0 netmask 255.255.255.0 {
 }
 EOF 
 ``` 
-5. 设置相关服务开机自启动
+5.设置相关服务开机自启动
 ``` python
 chkconfig --level 345 dhcpd on
 chkconfig --level 345 httpd on
