@@ -559,6 +559,4 @@ shell
 > 默认的报警方式是记录到log里, 这里无论是通过邮件报警, 或者通过这个文件最终实时通知到相关人员都是可行的
 
 
-
-
-
+[hexo md格式跟github解析的不太一样，完整参看github链接] (https://github.com/jaywayjayway/blog/blob/master/_posts/snort.md)
