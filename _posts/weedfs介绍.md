@@ -19,18 +19,15 @@ date: 2015-09-28 21:53:09
 - to serve the files fast
 
 简单地讲，`weedfs`只是一个key/values存储，并不完全支持POSIX文件系统。它类似于“NOSQL"，可以简单把它看成是"NOFS".存储接口通过http 方式对向外提供服务。
-
 <!--more-->
------
-
 
 #### 二、架构
 
 整个weedfs包括三种服务：
 
->1. master
->2. volume
->3. filer
+1. master
+2. volume
+3. filer
 
 **master:** 维护整个集群状态的服务。master支持集群工作模式，通过多master选举work leader ,实现高可用服务，避免单点故障。
 
@@ -97,16 +94,16 @@ weed-fs提供的是volume级别的副本机制。在启动master时候的可以�
 
 #### 三、部署
 由于weedfs把所有服务都集成在一个二制文里，相对其他的分布式存储系统，weedfs的部署就简单的多了。
-> 1. 二进制下载地址，[点击进入](https://bintray.com/chrislusf/seaweedfs/seaweedfs)
-> 2. github源代码，[点击进入](https://github.com/chrislusf/seaweedfs)
-> 3. docker 镜像，`docker search  seaweedfs`
+1. 二进制下载地址，[点击进入](https://bintray.com/chrislusf/seaweedfs/seaweedfs)
+2. github源代码，[点击进入](https://github.com/chrislusf/seaweedfs)
+3. docker 镜像，`docker search  seaweedfs`
 
 以下是部署weedfs的脚本，内容包括：
-> 1. 三个master
-> 2. 三个volume
-> 3. 每个volume分布在不同的rack
-> 4. defaultReplication=010
-> 5. 一个filer
+1. 三个master
+2. 三个volume
+3. 每个volume分布在不同的rack
+4. defaultReplication=010
+5. 一个filer
 
 ``` shell
 #!/bin/bash
@@ -202,7 +199,7 @@ $ curl -F file=@test.txt   http://localhost:9000/submit
 {"fid":"2,0225cc5c5b","fileName":"test.txt","fileUrl":"127.0.0.1:9004/2,0225cc5c5b","size":38}
 ```
 从返回的结果我们可以获取以下信息：
-    > **2,01b126cf55**  这个字符串应该由volume id, key uint64和cookie code构成。其中逗号前面的2就是volume id, `01b126cf55`则是key和cookie组成的串。fid是文件`text.txt`在集群中的唯一ID。后续查看、获取以及删除该文件数据都需要使 用这个fid。
+    >**2,01b126cf55**  这个字符串应该由volume id, key uint64和cookie code构成。其中逗号前面的2就是volume id, `01b126cf55`则是key和cookie组成的串。fid是文件`text.txt`在集群中的唯一ID。后续查看、获取以及删除该文件数据都需要使 用这个fid。
     >**fileUrl** 是该文件在weed-fs中的一个访问地址(多副本策略下会有多个)
 
 有了fileUrl我们就可以**获取**文件了
