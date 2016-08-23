@@ -3,17 +3,16 @@ categories: 分布式存储
 tags: [weedfs]
 date: 2015-09-28 21:53:09
 ---
-
-####目录
->  - 介绍
->  - 架构
->  - 部署
->  - 运维
->  - 测试
->  - 后记
+#### 目录
+- 介绍
+- 架构
+- 部署
+- 运维
+- 测试
+- 后记
 
 -----
-####一、 介绍
+#### 一、 介绍
 `weed-fs`，全名**Seaweed-fs**，是一种用golang实现的简单且高可用的分布式文件系统。该系统有以下两个目标：
 
 - to store billions of files
@@ -25,7 +24,7 @@ date: 2015-09-28 21:53:09
 -----
 
 
-####二、架构
+#### 二、架构
 
 整个weedfs包括三种服务：
 
@@ -44,7 +43,7 @@ master即相当于ceph中的Monitor 组件，volumes就是OSD的克隆，filer�
 
 分布式存储系统最重要的特点就是保证数据可靠性。常见的可靠性方案有副本机制，有纠删码机制。当前，weedfs通过副本来保证数据的可靠性。相较于ceph完善的crush模型，weedfs也提供一个类似的集群拓扑结构。它(Topology)**DataCenter**(数据中心)**Rack**(机架)、**Machine**(或叫Node)组成。weed-fs可以通过配置文件来描述整个集群的拓扑结构，也可以在运行volumes服务的时候通过参数设置拓扑。配置文件以XML格式为承载。以下是官方的一个示例 ：
 
-``` shell 
+``` shell
 <Configuration>
   <Topology>
     <DataCenter name="dc1">
@@ -75,39 +74,39 @@ weed-fs提供的是volume级别的副本机制。在启动master时候的可以�
 此处的`001`表示在同rack级设置一个副本（表示在一个rack里，有两份数据镜像，类似于RAID1）
 下面对`001`所代表的replication机制进行简要解析
 
-| Value      |    Value |  
-| :--------  | :--------| 
-| 000        | 无副本，只有一份 |  
-| 001        | 在同一rack级有一个副本 |  
-| 010        | 在同一dataCenter不同rack的里有一个副本 | 
+| Value      |    Value |
+| :--------  | :--------|
+| 000        | 无副本，只有一份 |
+| 001        | 在同一rack级有一个副本 |
+| 010        | 在同一dataCenter不同rack的里有一个副本 |
 | 100        | 在不同的dataCenter里有一个副本
 | 200        | 在不同的dataCenter里有两个副本
 | 110        | 在不同的dataCenter和同级的rack各有一个副本
-| ....       | .... 
+| ....       | ....
 
 如果replication的模式为`xyz`，**xyz**表示的含义如下
 
-| Value      |    Value |  
-| :--------  | :--------| 
+| Value      |    Value |
+| :--------  | :--------|
 | x          |  不同dataCenter级的副本数|
-| y          | 同一dataCenter，不同rack级的副本数|  
-| z          | 同一rack,不同node级的副本数 | 
+| y          | 同一dataCenter，不同rack级的副本数|
+| z          | 同一rack,不同node级的副本数 |
 
 
 -------
 
-####三、部署 
+#### 三、部署
 由于weedfs把所有服务都集成在一个二制文里，相对其他的分布式存储系统，weedfs的部署就简单的多了。
 > 1. 二进制下载地址，[点击进入](https://bintray.com/chrislusf/seaweedfs/seaweedfs)
 > 2. github源代码，[点击进入](https://github.com/chrislusf/seaweedfs)
 > 3. docker 镜像，`docker search  seaweedfs`
 
 以下是部署weedfs的脚本，内容包括：
-> 1. 三个master 
+> 1. 三个master
 > 2. 三个volume
 > 3. 每个volume分布在不同的rack
 > 4. defaultReplication=010
-> 5. 一个filer 
+> 5. 一个filer
 
 ``` shell
 #!/bin/bash
@@ -125,9 +124,9 @@ export LANG=cn_US.UTF-8
 
 
 ##以下是私有yum源检测
-rpm -qa | grep opstack-source > /dev/null 2>&1  || rpm -hvi http://xx.xx.xx.xx:/opstack-source-1.0-noarch.rpm 
-rpm -qa | grep weed-fs >  /dev/null 2>&1 || yum install weed-fs  -y 
-which screen > /dev/null 2>&1 || yum install screen -y 
+rpm -qa | grep opstack-source > /dev/null 2>&1  || rpm -hvi http://xx.xx.xx.xx:/opstack-source-1.0-noarch.rpm
+rpm -qa | grep weed-fs >  /dev/null 2>&1 || yum install weed-fs  -y
+which screen > /dev/null 2>&1 || yum install screen -y
 ###
 mkdir -p {$MASTER_v1,$MASTER_v2,$MASTER_v3,$VOLUME_v1,$VOLUME_v2,$VOLUME_v3,$FILER}
 
@@ -137,23 +136,23 @@ do
 lsof  -i:${BASE_PORT} > /dev/null 2>&1
 
 if  [ "X$?" == "X0" ];then
-    
-    BASE_PORT=`expr $BASE_PORT + 1 ` 
+
+    BASE_PORT=`expr $BASE_PORT + 1 `
     continue
 fi
-   
+
    break
 
-done 
+done
 
 
 MASTER_v1_PORT=${BASE_PORT}
 MASTER_v2_PORT=`expr $MASTER_v1_PORT + 1 `
 MASTER_v3_PORT=`expr $MASTER_v2_PORT + 1 `
 BASE_PORT=$MASTER_v3_PORT
-screen -d -m -S weedfs-master-v1  su - root -c " weed -v=3 master  -port=${MASTER_v1_PORT}  -mdir=${MASTER_v1}  -peers=localhost:${MASTER_v1_PORT},localhost:${MASTER_v2_PORT},localhost:${MASTER_v3_PORT} -defaultReplication=010 > ${MASTER_v1}/master.log 2>&1"  
-screen -d -m -S weedfs-master-v2  su - root -c " weed -v=3 master  -port=${MASTER_v2_PORT}  -mdir=${MASTER_v2}  -peers=localhost:${MASTER_v1_PORT},localhost:${MASTER_v2_PORT},localhost:${MASTER_v3_PORT} -defaultReplication=010 >  ${MASTER_v2}/master.log 2>&1" 
-screen -d -m -S weedfs-master-v3  su - root -c " weed -v=3 master  -port=${MASTER_v3_PORT}  -mdir=${MASTER_v3}  -peers=localhost:${MASTER_v1_PORT},localhost:${MASTER_v2_PORT},localhost:${MASTER_v3_PORT} -defaultReplication=010 >  ${MASTER_v3}/master.log 2>&1" 
+screen -d -m -S weedfs-master-v1  su - root -c " weed -v=3 master  -port=${MASTER_v1_PORT}  -mdir=${MASTER_v1}  -peers=localhost:${MASTER_v1_PORT},localhost:${MASTER_v2_PORT},localhost:${MASTER_v3_PORT} -defaultReplication=010 > ${MASTER_v1}/master.log 2>&1"
+screen -d -m -S weedfs-master-v2  su - root -c " weed -v=3 master  -port=${MASTER_v2_PORT}  -mdir=${MASTER_v2}  -peers=localhost:${MASTER_v1_PORT},localhost:${MASTER_v2_PORT},localhost:${MASTER_v3_PORT} -defaultReplication=010 >  ${MASTER_v2}/master.log 2>&1"
+screen -d -m -S weedfs-master-v3  su - root -c " weed -v=3 master  -port=${MASTER_v3_PORT}  -mdir=${MASTER_v3}  -peers=localhost:${MASTER_v1_PORT},localhost:${MASTER_v2_PORT},localhost:${MASTER_v3_PORT} -defaultReplication=010 >  ${MASTER_v3}/master.log 2>&1"
 
 
 BASE_PORT=`expr $BASE_PORT + 1 `
@@ -173,17 +172,17 @@ screen -d -m -S weedfs-filer  su - root -c "weed  -v=3  filer  -port=${FILER_POR
 
 cat << EOF
  ----------------------------------
-weedfs-maser-v1: localhost:${MASTER_v1_PORT}, log is ${MASTER_v1}/master.log 
-weedfs-maser-v2: localhost:${MASTER_v2_PORT}, log is ${MASTER_v2}/master.log 
-weedfs-maser-v3: localhost:${MASTER_v3_PORT}, log is ${MASTER_v3}/master.log 
-weedfs-vol-v1  : localhost:${VOLUME_v1_PORT}, log is ${MASTER_v1}/vol.log 
-weedfs-vol-v2  : localhost:${VOLUME_v2_PORT}, log is ${MASTER_v1}/vol.log 
-weedfs-vol-v3  : localhost:${VOLUME_v3_PORT}, log is ${MASTER_v1}/vol.log 
-weedfs-filer   : localhost:${FILER_PORT}, log is ${FILER}/filer.log 
+weedfs-maser-v1: localhost:${MASTER_v1_PORT}, log is ${MASTER_v1}/master.log
+weedfs-maser-v2: localhost:${MASTER_v2_PORT}, log is ${MASTER_v2}/master.log
+weedfs-maser-v3: localhost:${MASTER_v3_PORT}, log is ${MASTER_v3}/master.log
+weedfs-vol-v1  : localhost:${VOLUME_v1_PORT}, log is ${MASTER_v1}/vol.log
+weedfs-vol-v2  : localhost:${VOLUME_v2_PORT}, log is ${MASTER_v1}/vol.log
+weedfs-vol-v3  : localhost:${VOLUME_v3_PORT}, log is ${MASTER_v1}/vol.log
+weedfs-filer   : localhost:${FILER_PORT}, log is ${FILER}/filer.log
 EOF
 
 
-``` 
+```
 ------
 
 #### 四、运维
@@ -192,14 +191,14 @@ EOF
 
 所有的 HTTP API 都可以通过添加 `&pretty=y` 参数来格式化 json 输出.首先我们在本地创建 一个测试文件。
 
-``` shell 
+``` shell
 
-$ echo "hello weed-fs" > test.txt 
+$ echo "hello weed-fs" > test.txt
 
-``` 
+```
 **存储**一个文件，把`test.txt`上传到集群里
-``` shell 
-$ curl -F file=@test.txt   http://localhost:9000/submit 
+``` shell
+$ curl -F file=@test.txt   http://localhost:9000/submit
 {"fid":"2,0225cc5c5b","fileName":"test.txt","fileUrl":"127.0.0.1:9004/2,0225cc5c5b","size":38}
 ```
 从返回的结果我们可以获取以下信息：
@@ -214,7 +213,7 @@ hello weed-fs  ##即我们本地文件内容，存储有效##
 ```
 如果我们通过master地址的接口来查看上传的文件会发生什么呢？
 
-``` shell 
+``` shell
 $ curl http://127.0.0.1:9000/2,0225cc5c5b
 <a href="http://127.0.0.1:9005/2,0225cc5c5b">Moved Permanently</a>.
 
@@ -275,7 +274,7 @@ master集群状态
 $ curl "http://localhost:9000/cluster/status?pretty=y"
 {
   "IsLeader": true,
-  "Leader": "localhost:9000",  ## work leader 
+  "Leader": "localhost:9000",  ## work leader
   "Peers": [
     "localhost:9001",    #集群成员
     "localhost:9002"     #集群成员
@@ -284,7 +283,7 @@ $ curl "http://localhost:9000/cluster/status?pretty=y"
 ```
 
 拓扑信息查看
-```shell 
+```shell
 $ curl  "http://localhost:9000/dir/status?pretty=y"
 {
   "Topology": {
@@ -301,11 +300,11 @@ $ curl  "http://localhost:9000/dir/status?pretty=y"
                 "Max": 100,
                 "PublicUrl": "127.0.0.1:9003",
                 "Url": "127.0.0.1:9003",
-                "Volumes": 3  #当前节点分配的volume 
+                "Volumes": 3  #当前节点分配的volume
               }
             ],
             "Free": 97,
-            "Id": "vol-v1",  #rack id 
+            "Id": "vol-v1",  #rack id
             "Max": 100
           },
           {
@@ -372,7 +371,7 @@ $ curl  "http://localhost:9000/dir/status?pretty=y"
   "Version": "0.70 beta"
 ```
 
-volume卷的状态 
+volume卷的状态
 
 ``` shell
 $ curl "http://localhost:9000/vol/status?pretty=y"
@@ -384,7 +383,7 @@ $ curl "http://localhost:9000/vol/status?pretty=y"
         "vol-v1": {
           "127.0.0.1:9003": [
             {
-              "Id": 4,  ## volume id 
+              "Id": 4,  ## volume id
               "Size": 8,
               "ReplicaPlacement": {  ##replication策略
                 "SameRackCount": 0,
@@ -437,8 +436,3 @@ $ curl "http://localhost:9000/vol/status?pretty=y"
 ```
 
 状态不佳，先就此挂笔了。记于2015.09.28
-                                                        
-
-
-
-
