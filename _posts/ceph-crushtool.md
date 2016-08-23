@@ -10,6 +10,7 @@ Ceph通过crush实现数据的伪随机分布。在ceph里，一但是你的crus
 #### 创建crush map
 在ceph的工具链中有一款强大的工具---`crushtool`。可以用来创建、编辑、测试.
 
+<!--more-->
 ```python 
 # crushtool --outfn  crushmap --build --num_osds 10 \
    host straw 2 rack straw 2 default straw 0
