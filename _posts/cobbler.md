@@ -1,6 +1,7 @@
 title: Cobbler的简单使用
 date: 2016-05-24 12:44:10
-tags:[cobbler]
+tags:
+ - cobbler
 categories: devops
 ---
 ###  一、 cobbler介绍
