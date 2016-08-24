@@ -1,10 +1,10 @@
 title: rgw返回json化
 categories: ceph
 tags: [ceph,rgw]
-date: 2016-05-20 20:10:04
+date: 2016-08-22 20:10:04
 ---
 
-默认的s3fan返回的格式是xml,本例本通过在**ngx_lua**做控制，把返回的xml格式转成`json` 
+默认的s3返回的格式是xml,本例本通过在**ngx_lua**做控制，把返回的xml格式转成`json` 
 
 - nginx需要lua模块，推荐使用集成的的 [`openresty`](https://openresty.org/en/)
 - ngx_lua 需要 `LuaXml`模块，[仓库地址](https://github.com/LuaDist/luaxml)
