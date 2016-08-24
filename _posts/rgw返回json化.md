@@ -1,4 +1,8 @@
-
+title: rgw返回json化
+categories: ceph
+tags: [ceph,rgw]
+date: 2016-05-20 20:10:04
+---
 
 默认的s3fan返回的格式是xml,本例本通过在**ngx_lua**做控制，把返回的xml格式转成`json` 
 
@@ -7,6 +11,7 @@
 - 本例中通过子请求获取fastcgi的请求结果
 
 
+<!--more-->
 ```
 init_by_lua_block { require("LuaXml") }
 
