@@ -5,6 +5,9 @@ tags:
 
 categories: devops
 ---
+Python 是 90 年代初由 Guido Van Rossum 创立的。它是当前最流行的程序语言之一。它那纯净的语法令我一见倾心，它简直就是可以运行的伪码。
+
+请注意：本文以 Python 2.7 为基准，但也应该适用于所有 2.X 版本。还要继续学习最新的 Python 3 哦！
 
 ``` python
     # Single line comments start with a hash.
