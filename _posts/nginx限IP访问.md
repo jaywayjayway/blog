@@ -11,6 +11,8 @@ categories: devops
 
 针对某些IP开放特苏的URL访问，比如说网站的管理后台。在nginx里我们可以使用`geo`和`map`的使用，通过变量的判断来实现。当然，最便捷的方式就是通过多域名的方式。
 
+
+`geo`和`map`使用的变量是全局有效的，在各`server`段是共享的
 ``` powershell
 geo $remote_addr $denied1 {
         default 1;
