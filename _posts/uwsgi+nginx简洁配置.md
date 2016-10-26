@@ -13,7 +13,7 @@ categories: devops
 `uwsgi`一定要用`pip`安装版本的，路径为`/usr/bin/uwsgi`，使用`yum`安装版本的可能要进坑
 
 以下是`uwsgi`的配置文件
-``` shell 
+``` powershell 
 ## uwsgi.ini ###
 [uwsgi]
 # the base directory (full path)
@@ -39,7 +39,7 @@ daemonize       = /var/log/uwsgi/api.log
 
 ```
 `python`应用的启动文件(我这里是一个`flask`应用)
-```shell
+```powershell
 from alert import app
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0',port=2222)
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
 
 启动姿势
-```shell
+```powershell
 
 uwsgi的命令行启动：
 
@@ -60,7 +60,7 @@ daemon启动
 nginx的配置
 ```
 `nginx`的配置
-```shell
+```powershell
 upstream uwsgi {
     server unix:///var/run/api.sock;
 }
