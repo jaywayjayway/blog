@@ -38,6 +38,14 @@ gid             = daemon
 daemonize       = /var/log/uwsgi/api.log
 
 ```
+`python`应用的启动文件(我这里是一个`flask`应用)
+```shell
+from alert import app
+if __name__ == "__main__":
+    app.run(debug=True, host='0.0.0.0',port=2222)
+```
+
+
 启动姿势
 ```shell
 
