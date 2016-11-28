@@ -8,6 +8,7 @@ categories: devops
 ---
 
 # Elasticsearch Optimization Checklist
+[原文链接](https://github.com/garyelephant/blog/blob/master/elasticsearch_optimization_checklist.md)
 
 ## 假设
 *   hardware 假设
