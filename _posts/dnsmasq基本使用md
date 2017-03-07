@@ -5,6 +5,7 @@ categories: devops
 ---
 内网需要做dns解析，但同时希望用最简单的办法，那么`dnsmasq`是最佳的方案。另外，它还可以用来做屏蔽或者dns缓存。
 
+
 `dnsmasq`安装在此忽略，以下是最简单配置
 ``` powershell
 ## /etc/dnsmasq.conf 的配置文件##
