@@ -22,7 +22,7 @@ listen-address=127.0.0.1
 ```
 `Centos7`配置如下
 
-```shell
+```powershell
 resolv-file=/etc/resolv.dnsmasq.conf ## 指定上层的dns服务器，可以从resolv.conf复制即可
 domain-needed
 bogus-priv
