@@ -5,7 +5,7 @@ categories: devops
 ---
 内网需要做dns解析，但同时希望用最简单的办法，那么`dnsmasq`是最佳的方案。另外，它还可以用来做屏蔽或者dns缓存。
 
-`dnsmasq`安装在此忽略，以下是最简单配置
+`dnsmasq`安装在此忽略，以下是最简单配置 (Centos 6 )
 ``` powershell
 ## /etc/dnsmasq.conf 的配置文件##
 resolv-file=/etc/resolv.dnsmasq.conf ## 指定上层的dns服务器，可以从resolv.conf复制即可
@@ -20,7 +20,22 @@ addn-hosts=/etc/addion_hosts
 listen-address=127.0.0.1
 
 ```
+`Centos7`配置如下
 
+```powershell
+resolv-file=/etc/resolv.dnsmasq.conf ## 指定上层的dns服务器，可以从resolv.conf复制即可
+domain-needed
+bogus-priv
+strict-order
+# line 55: add (query the specific domain name to the specific DNS server)
+server=/google.com/8.8.8.8
+# line 123: uncomment (add domain name automatically)
+expand-hosts
+# line 133: add (define domain name)
+domain=s3.com    ##指定本地搜索的域 ##
+addn-hosts=/etc/addion_hosts
+address=/hello.me/127.0.0.1 ## 泛域名解析 ##
+```
 设置本地的dns服务器
 ```powershell
 echo "nameserver 127.0.0.1"  > /etc/resolv.conf
