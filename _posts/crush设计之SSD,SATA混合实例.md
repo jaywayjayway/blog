@@ -1,7 +1,7 @@
 title: crush设计之SSD,SATA混合实例
 date: 2017-03-15 14:34:10
 tags:
- - crushr
+ - crush
 categories: ceph
 ---
 
